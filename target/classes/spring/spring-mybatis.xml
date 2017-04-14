@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--第一部分：添加一个数据源-->
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/history?useUnicode=true&amp;characterEncoding=UTF8" />
+        <property name="username" value="root" />
+        <property name="password" value="1234" />
+    </bean>
+
+    <!--第二部分：添加对 mybatis的mapper的XML文件的管理器，利用工厂管理包内的指定XML文件-->
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:mybatis-config.xml" />
+        <property name="mapperLocations" value="classpath:mapper/*Mapper.xml" />
+    </bean>
+
+    <!--第三部分：添加对 相应 DAO层的 包的扫描，最终将mapper与dao层接口相对应-->
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" >
+        <property name="basePackage"  value="com.shiker.web.dao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+    <!--最终，完成：数据源&ndash;&gt;mapper&ndash;&gt;dao层的对应-->
+</beans>
